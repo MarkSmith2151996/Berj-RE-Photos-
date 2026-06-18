@@ -1,3 +1,4 @@
 .deps/
+vendor/
 *.log
 tmp/

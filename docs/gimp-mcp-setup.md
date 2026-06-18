@@ -33,6 +33,16 @@ sudo apt install -y gimp
 
 If the package repository lags behind the desired GIMP 3.2 build, treat the distro package as the baseline and verify the exact version before production rollout.
 
+Actual result on this WSL machine:
+
+- Ubuntu `24.04` currently provides `gimp 2.10.36`, not GIMP 3.x.
+- Headless batch startup works only when wrapped with `xvfb-run`.
+- Verified command:
+
+```bash
+xvfb-run -a gimp -i -b '(gimp-version)' -b '(gimp-quit 0)'
+```
+
 ## Install `maorcc/gimp-mcp`
 
 ```bash
@@ -88,6 +98,12 @@ Practical headless-style launch for batch workers:
 gimp -i -d -f --new-instance >/tmp/berj-gimp.log 2>&1 &
 ```
 
+On this WSL host, use `xvfb-run` for reliable non-interactive startup:
+
+```bash
+xvfb-run -a gimp -i -d -f --new-instance >/tmp/berj-gimp.log 2>&1 &
+```
+
 Meaning:
 
 - `-i`: no user interface
@@ -124,6 +140,19 @@ Suggested smoke test sequence:
 4. In another shell, start the MCP server with `uv run --directory /absolute/path/to/gimp-mcp gimp_mcp_server.py`.
 5. Confirm the bridge is reachable by invoking a low-risk tool such as image listing or GIMP info.
 
+Actual status on this WSL machine:
+
+- `maorcc/gimp-mcp` could not be used because it targets GIMP `3.2+` and this machine only has `2.10.36` available through apt.
+- `abelduarte/gimp-mcp` was installed in a local virtualenv and its bridge plugin was copied into `~/.config/GIMP/2.10/plug-ins/`, but its headless bridge also targets `gi.require_version("Gimp", "3.0")`.
+- Direct bridge startup under `xvfb-run` failed with:
+
+```text
+ValueError: Namespace Gimp not available
+GIMP-Warning: The batch interpreter 'python-fu-eval' is not available. Batch mode disabled.
+```
+
+- Result: the atomic MCP open/edit/snapshot/export workflow is currently blocked on getting a real GIMP 3.x runtime into the worker environment.
+
 ## Claude Desktop / Claude Code Config
 
 ### Claude Desktop
@@ -152,5 +181,6 @@ claude mcp add gimp-mcp -- uv run --directory /absolute/path/to/gimp-mcp gimp_mc
 
 ## Known Issues
 
-- Placeholder: confirm the exact unattended startup sequence required for `maorcc/gimp-mcp` in production worker environments.
-- Placeholder: verify whether the target Linux environment ships GIMP 3.2+ directly or needs a custom install path.
+- `maorcc/gimp-mcp` requires GIMP `3.2+`, but Ubuntu `24.04` on this WSL host only exposes `gimp 2.10.36` via apt.
+- `abelduarte/gimp-mcp` also targets the GIMP 3 API and fails on this host with `ValueError: Namespace Gimp not available` when loaded into the `2.10` plugin environment.
+- `python-fu-eval` is not available in the tested `2.10` batch path, which blocks the fallback server's auto-start bridge command.
