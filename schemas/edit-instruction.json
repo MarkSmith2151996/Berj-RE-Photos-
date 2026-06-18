@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://berj-re-photos.local/schemas/edit-instruction.json",
+  "title": "Edit Instruction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "image_path",
+    "output_path"
+  ],
+  "properties": {
+    "image_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "output_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "property_name": {
+      "type": "string"
+    },
+    "priority_tier": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "priority",
+        "rush"
+      ]
+    },
+    "edits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "params"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "perspective_correction",
+              "crop_composition",
+              "color_balance",
+              "sharpen_contrast",
+              "haze_reduction",
+              "brighten_facades",
+              "deepen_greens",
+              "sky_replacement",
+              "parking_cleanup",
+              "signage_sharpen",
+              "litter_removal",
+              "pavement_improve"
+            ]
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "preservation_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preserve_buildings": {
+          "type": "boolean"
+        },
+        "preserve_tenants": {
+          "type": "boolean"
+        },
+        "preserve_outparcels": {
+          "type": "boolean"
+        },
+        "preserve_monument_signs": {
+          "type": "boolean"
+        },
+        "preserve_logos": {
+          "type": "boolean"
+        },
+        "preserve_branding": {
+          "type": "boolean"
+        },
+        "preserve_landscaping_layouts": {
+          "type": "boolean"
+        }
+      }
+    },
+    "deliverable_standard": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "institutional",
+        "premium"
+      ]
+    }
+  }
+}
