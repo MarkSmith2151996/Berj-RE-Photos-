@@ -38,6 +38,7 @@
 
 ## Last 10 Changes
 
+- `CT-059`: tested GPT-5.4 proxy image-output capability; chat completions returned only text with a sandbox image reference, while `/images/edits` and `/images/generations` returned 404.
 - `CT-039`: scaffolded the repository with README, STATUS, agent prompts, edit schema, setup guide, `.gitignore`, and bootstrap script for GIMP MCP worker setup.
 - `CT-040`: installed GIMP 2.10 plus xvfb on WSL, tested both MCP candidates, and documented that the atomic MCP workflow is blocked because both bridges require the GIMP 3 API.
 
